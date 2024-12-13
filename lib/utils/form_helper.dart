@@ -3,22 +3,23 @@ import 'package:flutter/material.dart';
 class FormHelper {
   static Widget textInput(
     BuildContext context,
-    Object initialValue,
+    String? initialValue, // Changed to String? for null safety
     Function onChanged, {
     bool isTextArea = false,
     bool isNumberInput = false,
-    obscureText: false,
-    Function onValidate,
-    Widget prefixIcon,
-    Widget suffixIcon,
+    bool obscureText = false, // Added type bool for clarity
+    required Function onValidate,
+    Widget? prefixIcon,
+    Widget? suffixIcon,
   }) {
     return TextFormField(
-      initialValue: initialValue != null ? initialValue.toString() : "",
+      initialValue: initialValue ?? "", // Null safety handling
       decoration: fieldDecoration(
         context,
         "",
         "",
-        suffixIcon: suffixIcon,
+        suffixIcon: suffixIcon ?? SizedBox(),
+        prefixIcon: prefixIcon ?? SizedBox(),
       ),
       obscureText: obscureText,
       maxLines: !isTextArea ? 1 : 3,
@@ -36,13 +37,14 @@ class FormHelper {
     BuildContext context,
     String hintText,
     String helperText, {
-    Widget prefixIcon,
-    Widget suffixIcon,
+    required Widget prefixIcon,
+    required Widget suffixIcon,
   }) {
     return InputDecoration(
       contentPadding: EdgeInsets.all(6),
       hintText: hintText,
-      helperText: helperText,
+      helperText:
+          helperText.isNotEmpty ? helperText : null, // Handle null helperText
       prefixIcon: prefixIcon,
       suffixIcon: suffixIcon,
       enabledBorder: OutlineInputBorder(
@@ -61,11 +63,11 @@ class FormHelper {
   }
 
   static Widget fieldLabel(String labelName) {
-    return new Padding(
+    return Padding(
       padding: EdgeInsets.fromLTRB(0, 5, 0, 10),
       child: Text(
         labelName,
-        style: new TextStyle(
+        style: const TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 15.0,
         ),
@@ -74,39 +76,34 @@ class FormHelper {
   }
 
   static Widget saveButton(String buttonText, Function onTap,
-      {String color, String textColor, bool fullWidth}) {
-    return Container(
-      height: 50.0,
-      width: 150,
-      child: GestureDetector(
-        onTap: () {
-          onTap();
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.redAccent,
-              style: BorderStyle.solid,
-              width: 1.0,
-            ),
+      {required String color,
+      required String textColor,
+      required bool fullWidth}) {
+    return GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: Container(
+        height: 50.0,
+        width: fullWidth ? double.infinity : 150,
+        decoration: BoxDecoration(
+          border: Border.all(
             color: Colors.redAccent,
-            borderRadius: BorderRadius.circular(30.0),
+            style: BorderStyle.solid,
+            width: 1.0,
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Center(
-                child: Text(
-                  buttonText,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ),
-            ],
+          color: Colors.redAccent,
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        child: Center(
+          child: Text(
+            buttonText,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1,
+            ),
           ),
         ),
       ),
@@ -124,15 +121,15 @@ class FormHelper {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text(title),
-          content: new Text(message),
+          title: Text(title),
+          content: Text(message),
           actions: [
-            new FlatButton(
+            TextButton(
               onPressed: () {
-                return onPressed();
+                onPressed();
               },
-              child: new Text(buttonText),
-            )
+              child: Text(buttonText),
+            ),
           ],
         );
       },
