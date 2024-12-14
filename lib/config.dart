@@ -5,4 +5,5 @@ class Config {
   static String customerURL = "customers";
   static String tokenURL =
       "https://tinygroveuk.live-website.com/wp-json/jwt-auth/v1/token";
+  static String categoriesURL = "products/categories";
 }

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:tinygrove_android_app/models/customer.dart';
 import 'package:tinygrove_android_app/models/login_model.dart';
+import 'package:tinygrove_android_app/models/category.dart';
 
 import 'config.dart';
 
@@ -69,5 +70,36 @@ class APIService {
 
     // Return null if there's an error or no data
     return null;
+  }
+
+  Future<List<Category>> getCategories() async {
+    List<Category> data = [];
+
+    try {
+      String url = Config.url +
+          Config.categoriesURL +
+          "?consumer_key=${Config.key}&consumer_secret=${Config.secret}";
+
+      var response = await Dio().get(
+        url,
+        options: Options(
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/json",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        data = (response.data as List)
+            .map(
+              (i) => Category.fromJson(i),
+            )
+            .toList();
+      }
+    } on DioError catch (e) {
+      print(e.response);
+    }
+
+    return data;
   }
 }
