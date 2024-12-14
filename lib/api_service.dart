@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:tinygrove_android_app/models/customer.dart';
+import 'package:tinygrove_android_app/models/login_model.dart';
 
 import 'config.dart';
 
@@ -34,5 +35,39 @@ class APIService {
     }
 
     return ret;
+  }
+
+  Future<LoginResponseModel?> loginCustomer(
+      String username, String password) async {
+    try {
+      var response = await Dio().post(
+        Config.tokenURL,
+        data: {
+          "username": username,
+          "password": password,
+        },
+        options: Options(
+          headers: {
+            HttpHeaders.contentTypeHeader: "application/x-www-form-urlencoded",
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return LoginResponseModel.fromJson(response.data);
+      } else {
+        // Handle non-200 responses
+        print("Error: Unexpected response status ${response.statusCode}");
+      }
+    } on DioError catch (e) {
+      // Log Dio-specific errors
+      print("DioError: ${e.message}");
+    } catch (e) {
+      // Log general errors
+      print("Error: $e");
+    }
+
+    // Return null if there's an error or no data
+    return null;
   }
 }
